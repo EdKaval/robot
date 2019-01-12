@@ -25,9 +25,17 @@ cylinder::cylinder(int pUp, int pDown, int pVal, int downBound, int upBound) {
 void cylinder::Update() {
 	int cur    = analogRead(pinVal);
 	int needed = dBound + round((uBound - dBound) * (refValue/100));
-	int perc   = round((uBound - dBound) * 0.025);
+	int perc   = round((uBound - dBound) * 0.05);
 
-	if (cf) {
+	Serial.print("  A7:");
+	Serial.print(cur);
+	Serial.print("  needed:");
+	Serial.print(needed);
+	Serial.print("  perc:");
+	Serial.print(perc);
+	Serial.println(" ");
+
+	if (!cf) {
 		if (cur < (needed - perc)) {
 			cf = true;
 		} else if (cur > (needed + perc)) {
@@ -59,9 +67,9 @@ void cylinder::setAngle(float newAngle) {
 //--------------------MAIN CODE-------------------------------------------------
 
 //pinUp, pinDown, pinValue, lowBound, highBound
-cylinder cyl1(3, 9, A7, 730, 915);  //lowBound and highBound are min and max values of angle got from potenciometer
+cylinder cyl1(3, 7, A7, 730, 915);  //lowBound and highBound are min and max values of angle got from potenciometer
 cylinder cyl2(4, 8, A6, 730, 915);
-cylinder cyl3(5, 7, A5, 730, 915);
+cylinder cyl3(5, 9, A5, 0, 1023);
 //cylinder cyl1(2, 6, A5, 730, 915);  //for kleshi
 
 void serialFlush(){
@@ -105,8 +113,8 @@ void setup() {
 
 void loop() {
 	cyl1.Update();
-	cyl2.Update();
-	cyl3.Update();
+	//cyl2.Update();
+	//cyl3.Update();
 	/*
   	Serial.print("A5:");
 	Serial.print(analogRead(A5));
