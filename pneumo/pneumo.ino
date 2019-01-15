@@ -27,14 +27,6 @@ void cylinder::Update() {
 	int needed = dBound + round((uBound - dBound) * (refValue/100));
 	int perc   = round((uBound - dBound) * 0.05);
 
-	Serial.print("  A7:");
-	Serial.print(cur);
-	Serial.print("  needed:");
-	Serial.print(needed);
-	Serial.print("  perc:");
-	Serial.print(perc);
-	Serial.println(" ");
-
 	if (!cf) {
 		if (cur < (needed - perc)) {
 			cf = true;
@@ -60,17 +52,9 @@ void cylinder::Update() {
 
 void cylinder::setAngle(float newAngle) {
 	refValue = max(min(newAngle, 100), 0);  //in range 0-100%
-	Serial.print("Set cyl to ");
-	Serial.println(max(min(newAngle, 100), 0));
 }
 
-//--------------------MAIN CODE-------------------------------------------------
-
-//pinUp, pinDown, pinValue, lowBound, highBound
-cylinder cyl1(3, 7, A7, 730, 915);  //lowBound and highBound are min and max values of angle got from potenciometer
-cylinder cyl2(4, 8, A6, 730, 915);
-cylinder cyl3(5, 9, A5, 0, 1023);
-//cylinder cyl1(2, 6, A5, 730, 915);  //for kleshi
+//-----------------COMMAND PROMPT-----------------------------------------------
 
 void serialFlush(){
 	while(Serial.available() > 0) {
@@ -107,6 +91,14 @@ void cmd(String comnd, String value) {
 	}
 }
 
+//--------------------MAIN CODE-------------------------------------------------
+
+//pinUp, pinDown, pinValue, lowBound, highBound
+cylinder cyl1(3, 7, A7, 730, 915);  //lowBound and highBound are min and max values of angle got from potenciometer
+cylinder cyl2(4, 8, A6, 730, 915);
+cylinder cyl3(5, 9, A5, 0, 1023);
+//cylinder cyl1(2, 6, A5, 730, 915);  //for kleshi
+
 void setup() {
 	Serial.begin(115200);
 }
@@ -115,13 +107,13 @@ void loop() {
 	cyl1.Update();
 	//cyl2.Update();
 	//cyl3.Update();
-	/*
+
   	Serial.print("A5:");
 	Serial.print(analogRead(A5));
 	Serial.print("  A6:");
 	Serial.print(analogRead(A6));
 	Serial.print("  A7:");
 	Serial.print(analogRead(A7));
-	Serial.println("  ");*/
+	Serial.println("  ");
 	cmdParse();
 }
