@@ -54,11 +54,20 @@ void cylinder::setAngle(float newAngle) {
 	refValue = max(min(newAngle, 100), 0);  //in range 0-100%
 }
 
+//------------------------------------------------------------------------------
+
+//pinUp, pinDown, pinValue, lowBound, highBound
+cylinder cyl1(3, 7, A7, 730, 915);  //lowBound and highBound are min and max values of angle got from potenciometer
+cylinder cyl2(4, 8, A6, 375, 710);
+cylinder cyl3(5, 9, A5, 780, 1023);
+//cylinder cyl1(2, 6, A5, 730, 915);  //for kleshi
+
 //-----------------COMMAND PROMPT-----------------------------------------------
 
 void serialFlush(){
+	char t;
 	while(Serial.available() > 0) {
-		char t = Serial.read();
+		t = Serial.read();
 	}
 }
 
@@ -83,9 +92,45 @@ void cmd(String comnd, String value) {
 	} else if (comnd == "upper") {
 		cyl2.setAngle(atof(cm));
 	} else if (comnd == "hook") {
-
+		switch (cm[0]) {
+			case '=': {
+				digitalWrite(2, 0);
+				digitalWrite(6, 0);
+				break;
+			}
+			case '+': {
+				digitalWrite(2, 1);
+				digitalWrite(6, 0);
+				break;
+			}
+			case '-': {
+				digitalWrite(2, 0);
+				digitalWrite(6, 1);
+				break;
+			}
+		}
 	} else if (comnd == "hookCyl") {
 		cyl3.setAngle(atof(cm));
+	} else if (comnd == "rot") {
+		switch (cm[0]) {
+			case '=': {
+				digitalWrite(A2, 0);
+				digitalWrite(A3, 0);
+				break;
+			}
+			case '+': {
+				digitalWrite(A2, 0);
+				delayMicroseconds(300);
+				digitalWrite(A3, 1);
+				break;
+			}
+			case '-': {
+				digitalWrite(A3, 0);
+				delayMicroseconds(300);
+				digitalWrite(A2, 1);
+				break;
+			}
+		}
 	} else {
 		Serial.println("Unknown command");
 	}
@@ -93,27 +138,26 @@ void cmd(String comnd, String value) {
 
 //--------------------MAIN CODE-------------------------------------------------
 
-//pinUp, pinDown, pinValue, lowBound, highBound
-cylinder cyl1(3, 7, A7, 730, 915);  //lowBound and highBound are min and max values of angle got from potenciometer
-cylinder cyl2(4, 8, A6, 730, 915);
-cylinder cyl3(5, 9, A5, 0, 1023);
-//cylinder cyl1(2, 6, A5, 730, 915);  //for kleshi
-
 void setup() {
 	Serial.begin(115200);
+	pinMode(2, OUTPUT);
+	pinMode(6, OUTPUT);
+	pinMode(A2, OUTPUT);
+	pinMode(A3, OUTPUT);
 }
 
 void loop() {
 	cyl1.Update();
-	//cyl2.Update();
-	//cyl3.Update();
+	cyl2.Update();
+	cyl3.Update();
 
+	/*
   	Serial.print("A5:");
 	Serial.print(analogRead(A5));
 	Serial.print("  A6:");
 	Serial.print(analogRead(A6));
 	Serial.print("  A7:");
 	Serial.print(analogRead(A7));
-	Serial.println("  ");
+	Serial.println("  ");*/
 	cmdParse();
 }
